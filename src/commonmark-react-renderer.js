@@ -5,6 +5,8 @@ var assign = require('lodash.assign');
 var isPlainObject = require('lodash.isplainobject');
 var xssFilters = require('xss-filters');
 var pascalCase = require('pascalcase');
+var SyntaxHighlighter = require('react-syntax-highlighter').default;
+var monokaiSublime = require('react-syntax-highlighter/dist/styles').monokaiSublime;
 
 var typeAliases = {
     blockquote: 'block_quote',
@@ -40,12 +42,23 @@ var defaultRenderers = {
         return createElement(tag, attrs, props.children);
     },
     code_block: function CodeBlock(props) { // eslint-disable-line camelcase
-        var className = props.language && 'language-' + props.language;
-        var code = createElement('code', { className: className }, props.literal);
-        return createElement('pre', getCoreProps(props), code);
+        //var className = props.language && 'language-' + props.language;
+        //var code = createElement('code', { className: className }, props.literal);
+        //return createElement('pre', getCoreProps(props), code);
+        let sProps = {
+            language: props.language,
+            style: monokaiSublime,
+            showLineNumbers: true
+        }
+        return createElement(SyntaxHighlighter, sProps, props.literal);
     },
     code: function Code(props) {
-        return createElement('code', getCoreProps(props), props.children);
+        let sProps = {
+            language: props.language,
+            style: monokaiSublime,
+            showLineNumbers: true
+        }
+        return createElement(SyntaxHighlighter, sProps, props.literal);
     },
     heading: function Heading(props) {
         return createElement('h' + props.level, getCoreProps(props), props.children);
@@ -151,7 +164,6 @@ function getNodeProps(node, key, opts, renderer) {
             var codeInfo = node.info ? node.info.split(/ +/) : [];
             if (codeInfo.length > 0 && codeInfo[0].length > 0) {
                 props.language = codeInfo[0];
-                props.codeinfo = codeInfo;
             }
             break;
         case 'code':
